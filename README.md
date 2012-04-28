@@ -7,6 +7,10 @@ Please see http://tomdignan.com/projects/gdrive-cli for a video introduction.
 sudo pip install google-api-python-client
 sudo pip install httplib2
 
+##Chrome Application
+
+To use this, you need to register a chrome application. It must be at least installable by you, but need not be published. There is a boilerplate app in the repo you can use to base yours off of. I highly encourage you to take this code and use it to work towards developing useful and profitable chrome apps on the chrome web store!
+
 ##Installation
 
 1. Visit [http://developers.google.com/drive](http://developers.google.com/drive) and perform all the required steps to publish a chrome app with Google Drive enabled. Don't hestitate to contact me if you have trouble with this, because it is tricky.
