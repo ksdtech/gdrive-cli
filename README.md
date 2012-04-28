@@ -17,7 +17,7 @@ sudo pip install httplib2
 6. ./gdrive-cli --authenticate will open an oauth dialog in your default browser. For official support, you must make chrome your default browser. Click this.
 7. You are ready to issue gdrive-cli commands. Have fun. If your session expires, reauthenticate.
 
-##How to upload a file. Show its remote metadata, and then download it.
+##How to upload a file, how its remote metadata, and then download it.
 
 To upload a file you must have enabled its mime type in the Google API console under Google Drive SDK, and filled out all other fields of this form. You must supply the file extension in the title. For now, just use "none" as the parent id. The code will see "none" and ignore the field.
 
