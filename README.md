@@ -80,7 +80,7 @@ A. Yes, use fuse-python. There is currently a C project underway as well that yo
 
 Thanks to
 
-* Daniel Wallace aka gtmanfred for being the first to install gdrive-cli and creating a package for arch linux's AUR.
+* [Daniel Wallace](http://code.gtmanfred.com) aka gtmanfred for being the first to install gdrive-cli and creating a package for arch linux's AUR.
 * zendeavor
 
 ##Support
