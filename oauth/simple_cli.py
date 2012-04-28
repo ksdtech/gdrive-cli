@@ -1,5 +1,4 @@
-"""
-Copyright 2012 Thomas Dignan <tom@tomdignan.com>
+""" Copyright 2012 Thomas Dignan <tom@tomdignan.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,9 +18,24 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run
 from pprint import pprint
-from os import getenv
+import os
+import sys
 
-CLIENTSECRETS_LOCATION=".private/client_secrets.json"
+home = os.getenv("HOME")
+
+global_location = "/etc/gdrive-client"
+local_location = home + "/.gdrive_client_secrets"
+test_location = ".private/client_secrets.json"
+
+if os.path.isfile(test_location):
+    client_secrets_location = test_location
+elif os.path.isfile(local_location):
+    client_secrets_location = local_location
+elif os.path.isfile(global_location):
+    client_secrets_location = global_location
+else:
+    print "No client_secrets.json file was found! Exiting."
+    sys.exit(1)
 
 SCOPES = [
         'https://www.googleapis.com/auth/drive.file',
@@ -35,9 +49,9 @@ def authenticate():
 
     Warning, this launches a web browser! You will need to click.
     """
-    storage_path = getenv("HOME") + "/.gdrivefs.dat"
+    storage_path = home + "/.gdrivefs.dat"
     storage = Storage(storage_path)
-    flow = flow_from_clientsecrets(CLIENTSECRETS_LOCATION, ' '.join(SCOPES))
+    flow = flow_from_clientsecrets(client_secrets_location, ' '.join(SCOPES))
     credentials = run(flow, storage)
     return credentials
 
