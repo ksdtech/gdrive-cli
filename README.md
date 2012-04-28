@@ -18,7 +18,10 @@ sudo pip install httplib2
 7. You are ready to issue gdrive-cli commands. Have fun. If your session expires, reauthenticate.
 
 ##Setting the default browser
+
 gdrive-cli uses python's webbrowser module to find your default browser. You can set the BROWSER environment variable to override this. For more information, see [webbrowser](http://docs.python.org/library/webbrowser.html)
+
+    export BROWSER="google-chrome"
 
 ##Client Secrets File
 
@@ -43,26 +46,26 @@ Valid places for this file are, in order
 2. $HOME/.gdrive_client_secrets
 3. /etc/gdrive-cli
 
-##How to upload a file, how its remote metadata, and then download it.
+##How to upload a file, show its remote metadata, and then download it.
 
 To upload a file you must have enabled its mime type in the Google API console under Google Drive SDK, and filled out all other fields of this form. You must supply the file extension in the title. For now, just use "none" as the parent id. The code will see "none" and ignore the field.
 
-    gdrive --insert foo.txt "my foo document" none "text/plain" foo.txt
-    gdrive --show <hash_that_insert_printed>
-    gdrive --download <hash_that_insert_printed>
+    gdrive-cli --insert foo.txt "my foo document" none "text/plain" foo.txt
+    gdrive-cli --show <hash_that_insert_printed>
+    gdrive-cli --download <hash_that_insert_printed>
 
 ##Listing files
 
 You can list files with
     
-    gdrive --list
+    gdrive-cli --list
 
 ##TODO
 
 The following features need to be implemented
 
-   --rename
-   --update
+* --rename
+* --update
 
 ##FAQ
 
