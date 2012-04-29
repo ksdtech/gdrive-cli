@@ -70,7 +70,6 @@ You can list files with
 
 The following features need to be implemented
 
-* --rename
 * --update
 
 ##FAQ
@@ -98,4 +97,6 @@ Thanks to
 
 Live support in #gdrive-cli on irc.freenode.net and development discussion! You *may* have to idle a bit.
 
+##Known Issues
 
+* UTF-8 files might not work for --insert [see this stackoverflow post](http://stackoverflow.com/questions/10372370/when-attempting-to-upload-a-utf-8-text-file-to-google-drive-with-the-google-api) and this [bug report](http://code.google.com/p/google-api-python-client/issues/detail?id=131&thanks=131&ts=1335708962)
