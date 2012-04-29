@@ -11,6 +11,8 @@ sudo pip install httplib2
 
 To use this, you need to register a chrome application. It must be at least installable by you, but need not be published. There is a boilerplate app in the repo you can use to base yours off of. I highly encourage you to take this code and use it to work towards developing useful and profitable chrome apps on the chrome web store!
 
+You *must* publish the chrome app for this to work. It need not be published publically, but you must at least make use of the "publish to test accounts feature" or you will get error 403.
+
 ##Installation
 
 1. Visit [http://developers.google.com/drive](http://developers.google.com/drive) and perform all the required steps to publish a chrome app with Google Drive enabled. Don't hestitate to contact me if you have trouble with this, because it is tricky.
@@ -76,6 +78,11 @@ The following features need to be implemented
 Q. Can I use this code to make a FUSE filesystem? 
 
 A. Yes, use fuse-python. There is currently a C project underway as well that you should check out https://github.com/jcline/fuse-google-drive although I am unsure of the status at this time.
+
+
+Q. Why am I am getting "The authenticated user has not installed the app with client id” error?
+
+A. [Read my answer on Stack Overflow](http://stackoverflow.com/questions/10345904/why-am-i-getting-the-authenticated-user-has-not-installed-the-app-with-client-i/10352692#10352692)
 
 ##Credits
 

@@ -61,6 +61,8 @@ def make_argparser():
 
     parser.add_argument("--show", help="show file metadata", metavar="<file_id>")
 
+#    parser.add_argument("--easy-upload", help="like insert, but easier", metavar=("<file_name>", "<mime_type"))
+
     parser.add_argument("--list", help="list application's files (uses local database)", action="store_true")
 
     parser.add_argument("--download", help="download file contents and print to stdout", metavar="<drive_file>")
