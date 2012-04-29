@@ -19,8 +19,8 @@ You *must* publish the chrome app for this to work. It need not be published pub
 2. You must create this chrome app, put it in the chrome web store, and install it in your browser!
 3. git clone https://tom-dignan@github.com/tom-dignan/gdrive-cli.git
 4. Using the information you got from google, create a $HOME/.gdrive_client_secrets file. Remove the trailing "apps.googleusercontent.com" from the id as well as the prepending word "secret" from the client secret.
-5. ./gdrive-cli --init-database to create your local database. You may remove the ~/.gdrive prefixed files if necessary, but if you remove your client secrets file you should back it up. Removing these files will revoke your ability to list uploaded files permanently, as gdrive-cli relies on a local SQLite database to list files, since files are private to the Google Drive app that creates them. Google Docs supports listings, if you want to write support for that, but I like the speed of local metadata.
-6. ./gdrive-cli --authenticate will open an oauth dialog in your default browser. For official support, you must make chrome your default browser. Click this.
+5. **./gdrive-cli --init-database** to create your local database. You may remove the ~/.gdrive prefixed files if necessary, but if you remove your client secrets file you should back it up. Removing these files will revoke your ability to list uploaded files permanently, as gdrive-cli relies on a local SQLite database to list files, since files are private to the Google Drive app that creates them. Google Docs supports listings, if you want to write support for that, but I like the speed of local metadata.
+6. **./gdrive-cli --authenticate** will open an oauth dialog in your default browser. For official support, you must make chrome your default browser. Click this.
 7. You are ready to issue gdrive-cli commands. Have fun. If your session expires, reauthenticate.
 
 ##Setting the default browser
