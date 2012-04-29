@@ -135,7 +135,10 @@ def handle_list():
         print "%(title)s\t\t%(id)s" % { "title" : f[0], "id" : f[1] }
 
 def handle_rename(args):
-    print "not implemented"
+    service = get_service_object()
+    file_id = args[0]
+    new_name = args[1]
+    print gdrive.rename_file(service, file_id, new_name)
 
 def handle_update(args):
     print "not implemented"

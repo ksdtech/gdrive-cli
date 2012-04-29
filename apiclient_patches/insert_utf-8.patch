@@ -1,0 +1,12 @@
+204,212c204
+< 
+<     #Fix for http://stackoverflow.com/questions/10372370/when-attempting-to-upload-a-utf-8-text-file-with-the-google-drive-sdk-for-python
+<     #-Tom <tom.dignan@gmail.com>
+<     bytes_read = self._fd.read(length)
+< 
+<     if "utf-8" in self._mimetype.lower():
+<         bytes_read = bytes_read.encode("utf-8")
+< 
+<     return bytes_read
+---
+>     return self._fd.read(length)
