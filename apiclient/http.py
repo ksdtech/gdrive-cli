@@ -202,14 +202,7 @@ class MediaFileUpload(MediaUpload):
       self._fd = open(self._filename, 'rb')
     self._fd.seek(begin)
 
-    #Fix for http://stackoverflow.com/questions/10372370/when-attempting-to-upload-a-utf-8-text-file-with-the-google-drive-sdk-for-python
-    #-Tom <tom.dignan@gmail.com>
-    bytes_read = self._fd.read(length)
-
-    if "utf-8" in self._mimetype.lower():
-        bytes_read = bytes_read.encode("utf-8")
-
-    return bytes_read
+    return self._fd.read(length)
 
   def to_json(self):
     """Creating a JSON representation of an instance of Credentials.
