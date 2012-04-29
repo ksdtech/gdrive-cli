@@ -9,15 +9,15 @@ def connect():
     dbpath = os.getenv("HOME") + os.path.sep + ".gdrive-cli.db"
     return sqlite3.connect(dbpath)
 
-
-"""
-Inserts file metadata returned by gdrive.insert_file into the
-tbl_files table and tables related to it.
-
-Returns:
-    id of the inserted data
-"""
 def insert_file(metadata):
+    """
+    Inserts file metadata returned by gdrive.insert_file into the
+    tbl_files table and tables related to it.
+
+    Returns:
+        id of the inserted data
+    """
+
     conn = connect()
     cursor = conn.cursor()
 
