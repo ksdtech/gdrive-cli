@@ -70,7 +70,7 @@ def make_argparser():
     parser.add_argument("--insert", help="insert new file", nargs=5,
             metavar=("<title -- must include file ext>", "<description>", "<parent_id (if none, pass none)>", "<mime_type>", "<filename>"))
 
-    parser.add_argument("--rename", help="TODO: rename a file", nargs=2,
+    parser.add_argument("--rename", help="rename a file", nargs=2,
             metavar=("<file_id>", "<new_title>"))
 
     parser.add_argument("--update", help="TODO: update file", nargs=6,
@@ -138,7 +138,10 @@ def handle_rename(args):
     service = get_service_object()
     file_id = args[0]
     new_name = args[1]
-    print gdrive.rename_file(service, file_id, new_name)
+    gdrive.rename_file(service, file_id, new_name)
+    dbhelper.rename_file(file_id, new_name)
+    print "renamed %(file_id)s to %(new_name)s" % {"file_id" :
+            file_id, "new_name" : new_name }
 
 def handle_update(args):
     print "not implemented"

@@ -116,6 +116,36 @@ def insert_file(metadata):
 
     return metadata["id"]
 
+
+def rename_file(file_id, name):
+    """
+    Renames the file in the local sqlite database to reflect the remote change.
+    Infers fileExtension from the filename.
+
+    Returns:
+        id of renamed file
+    """
+    conn = connect()
+    cursor = conn.cursor()
+
+    tokens = name.split(".")
+    fileExtension = tokens[len(tokens) - 1]
+
+    cursor.execute("""
+        UPDATE tbl_files
+        SET title = ?,  fileExtension = ?
+        WHERE id = ?;
+        """, (
+            name,
+            fileExtension,
+            file_id
+        ))
+
+    conn.commit()
+    cursor.close()
+
+    return file_id
+
 def select_all_files():
     """
     Generates a basic listing of files in tbl_files
