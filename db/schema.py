@@ -51,8 +51,8 @@ def create_schema():
     """
     cursor.execute("""
         CREATE TABLE tbl_parentsCollection (
-            id TEXT,
             files_id TEXT,
+            parent_id TEXT,
             parentLink TEXT,
             FOREIGN KEY (files_id) REFERENCES tbl_files(id)
             );
