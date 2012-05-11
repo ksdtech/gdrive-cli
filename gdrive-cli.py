@@ -73,7 +73,7 @@ def make_argparser():
     parser.add_argument("--rename", help="rename a file", nargs=2,
             metavar=("<file_id>", "<new_title>"))
 
-    parser.add_argument("--update", help="TODO: update file", nargs=6,
+    parser.add_argument("--update", help="update a file", nargs=6,
             metavar=("<file_id>", "<new_title>", "<new_description>", "<new_mime_type>",
                 "<new_filename>", "<new_revision>"))
 
