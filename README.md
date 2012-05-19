@@ -85,13 +85,15 @@ A. [Read my answer on Stack Overflow](http://stackoverflow.com/questions/1034590
 
 ##Credits
 
+###Patch Contributors
+
+* [Chris Knutson](https://github.com/Canuteson/)
 
 ###Packagers
 
 Thanks to
 
 * [Daniel Wallace](http://code.gtmanfred.com) aka gtmanfred for being the first to install gdrive-cli and creating a package for arch linux's AUR.
-* zendeavor
 
 ##Support
 
