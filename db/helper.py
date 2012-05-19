@@ -78,15 +78,15 @@ def insert_file(metadata):
     for parent in metadata["parentsCollection"]:
         cursor.execute("""
             INSERT INTO tbl_parentsCollection (
-                id,
                 files_id,
+                parent_id,
                 parentLink
             ) VALUES (
                 ?,?,?
             );
             """, (
-                parent["id"],
                 metadata["id"],
+                parent["id"],
                 parent["parentLink"],
             )
         );
@@ -145,6 +145,101 @@ def rename_file(file_id, name):
     cursor.close()
 
     return file_id
+
+def update_file(metadata):
+    """
+    Updates file metadata returned by gdrive.update_file into the
+    tbl_files table and tables related to it.
+
+    Returns:
+        id of the inserted data
+    """
+
+    conn = connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE tbl_files
+        SET createdDate = ?,
+            description = ?, 
+            downloadUrl = ?, 
+            etag = ?, 
+            fileExtension = ?, 
+            fileSize = ?, 
+            kind = ?, 
+            lastViewedDate = ?, 
+            md5Checksum = ?, 
+            mimeType = ?, 
+            modifiedBymeDate = ?, 
+            modifiedDate = ?, 
+            title = ?
+        WHERE id = ?;
+        """, (
+            metadata["createdDate"],
+            metadata["description"],
+            metadata["downloadUrl"],
+            metadata["etag"],
+            metadata["fileExtension"],
+            metadata["fileSize"],
+            metadata["kind"],
+            metadata["lastViewedDate"],
+            metadata["md5Checksum"],
+            metadata["mimeType"],
+            metadata["modifiedByMeDate"],
+            metadata["modifiedDate"],
+            metadata["title"],
+            metadata["id"],
+        )
+    );
+
+    cursor.execute("""
+        UPDATE tbl_labels
+        SET hidden = ?,
+            starred = ?,
+            trashed = ?
+        WHERE files_id = ?;
+        """, (
+            metadata["labels"]["hidden"],
+            metadata["labels"]["starred"],
+            metadata["labels"]["trashed"],
+            metadata["id"],
+        )
+    );
+
+    for parent in metadata["parentsCollection"]:
+        cursor.execute("""
+            UPDATE tbl_parentsCollection
+            SET parent_id = ?,
+                parentLink = ?
+            WHERE files_id = ?
+            """, (
+                parent["id"],
+                parent["parentLink"],
+                metadata["id"],
+            )
+        );
+
+    cursor.execute("""
+        UPDATE tbl_userPermission 
+        SET etag = ?,
+            kind = ?,
+            role = ?,
+            type = ?
+        WHERE files_id = ?;
+        """, (
+            metadata["userPermission"]["etag"],
+            metadata["userPermission"]["kind"],
+            metadata["userPermission"]["role"],
+            metadata["userPermission"]["type"],
+            metadata["id"],
+        )
+    );
+
+    conn.commit()
+    cursor.close()
+
+    return metadata["id"]
+
 
 def select_all_files():
     """

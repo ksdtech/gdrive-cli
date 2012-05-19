@@ -73,7 +73,7 @@ def make_argparser():
     parser.add_argument("--rename", help="rename a file", nargs=2,
             metavar=("<file_id>", "<new_title>"))
 
-    parser.add_argument("--update", help="TODO: update file", nargs=6,
+    parser.add_argument("--update", help="update a file", nargs=6,
             metavar=("<file_id>", "<new_title>", "<new_description>", "<new_mime_type>",
                 "<new_filename>", "<new_revision>"))
 
@@ -144,7 +144,25 @@ def handle_rename(args):
             file_id, "new_name" : new_name }
 
 def handle_update(args):
-    print "not implemented"
+    service = get_service_object()
+
+    file_id = args[0]
+    new_title = args[1]
+    new_description = args[2]
+    new_mime_type = args[3]
+    new_filename = args[4]
+    new_revision = args[5]
+
+    if new_revision == "false":
+        new_revision = False
+    else:
+        new_revision = True
+        
+
+    file = gdrive.update_file(service, file_id, new_title, new_description, new_mime_type, new_filename, new_revision)
+
+    id = dbhelper.update_file(file)
+    print "Updated file ", id
 
 def handle_init_database():
     print "Creating database..."
