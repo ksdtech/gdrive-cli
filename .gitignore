@@ -4,3 +4,5 @@
 *.swp
 */*.swp
 *.pid
+apiclient/*
+
