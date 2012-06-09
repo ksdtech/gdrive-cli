@@ -3,7 +3,7 @@ from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
 import httplib2
 import traceback
-
+import os
 """
 Google Drive python module. The code in this file is taken directly from
 Google's API reference.
@@ -128,7 +128,10 @@ def insert_file(service, title, description, parent_id, mime_type, filename):
     Returns:
         Inserted file metadata if successful, None otherwise.
     """
-    media_body = MediaFileUpload(filename, mimetype=mime_type)
+    if os.path.getsize(filename) > 2**20:
+        media_body = MediaFileUpload(filename, mimetype=mime_type, chunksize=1024*1024, resumable=True)
+    else:
+        media_body = MediaFileUpload(filename, mimetype=mime_type)
     body = {
         'title': title,
         'description': description,
@@ -184,6 +187,29 @@ def rename_file(service, file_id, new_title):
         print 'An error occurred: %s' % error
         return None
 
+################################################################################
+# Files: delete                                                                                                                                #
+################################################################################
+
+def delete_file_by_id(service, file_id):
+    """Delete a file.
+
+    Args:
+        service: Drive API Service instance.
+        file_id: ID of the file to delete.
+    Returns:
+        Success status message if successful, None otherwise.
+    """
+    try:
+        delete_file = service.files().delete(
+            id=file_id).execute()
+
+        return file_id
+    except errors.HttpError, error:
+        print 'An error occurred: $s' % error
+        return None
+        
+
 
 ################################################################################
 # Files: update                                                                                                                                #
@@ -214,7 +240,10 @@ def update_file(service, file_id, new_title, new_description, new_mime_type,
         file['mimeType'] = new_mime_type
 
         # File's new content.
-        media_body = MediaFileUpload(new_filename, mimetype=new_mime_type)
+        if os.path.getsize(new_filename) > 2**20:
+            media_body = MediaFileUpload(new_filename, mimetype=new_mime_type, chunksize=1024*1024, resumable=True)
+        else:
+            media_body = MediaFileUpload(new_filename, mimetype=new_mime_type)
 
         # Send the request to the API.
         updated_file = service.files().update(
