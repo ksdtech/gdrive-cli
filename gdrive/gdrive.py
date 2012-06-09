@@ -240,10 +240,10 @@ def update_file(service, file_id, new_title, new_description, new_mime_type,
         file['mimeType'] = new_mime_type
 
         # File's new content.
-        if os.path.getsize(new_filename) > 5*5*5*5*5*2**20:
+        if os.path.getsize(new_filename) > 5*2**20:
             media_body = MediaFileUpload(new_filename, mimetype=new_mime_type, chunksize=1024*1024, resumable=True)
         else:
-            media_body = MediaFileUpload(new_filename, mimetype=new_mime_type)
+            media_body = MediaFileUpload(new_filename, mimetype=new_mime_type, resumable=False)
 
         # Send the request to the API.
         updated_file = service.files().update(
