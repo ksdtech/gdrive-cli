@@ -23,6 +23,10 @@ import sys
 
 home = os.getenv("HOME")
 
+# windows
+if home is None:
+    home = os.getenv("HOMEPATH")
+
 global_location = "/etc/gdrive-client"
 local_location = home + "/.gdrive_client_secrets"
 test_location = ".private/client_secrets.json"

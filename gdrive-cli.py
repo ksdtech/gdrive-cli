@@ -30,7 +30,13 @@ from db import helper as dbhelper
 from db import schema as dbschema
 
 def get_stored_credentials_path():
-    return getenv("HOME") + "/.gdrive_oauth"
+    home = getenv("HOME")
+
+    # windows compat
+    if home is None:
+        home = getenv("HOMEPATH")
+
+    return home + "/.gdrive_oauth"
 
 def get_service_object():
     credentials = get_stored_credentials()
@@ -73,6 +79,9 @@ def make_argparser():
     parser.add_argument("--rename", help="rename a file", nargs=2,
             metavar=("<file_id>", "<new_title>"))
 
+    parser.add_argument("--easy-rename", help="rename a file by name", nargs=2,
+            metavar=("<original_name>", "<new_name>"))
+
     parser.add_argument("--update", help="update a file", nargs=6,
             metavar=("<file_id>", "<new_title>", "<new_description>", "<new_mime_type>",
                 "<new_filename>", "<new_revision>"))
@@ -82,9 +91,9 @@ def make_argparser():
 def handle_args(args):
     if args.authenticate is True:
         handle_authenticate()
-    if args.list is True:
+    elif args.list is True:
         handle_list()
-    if args.show is not None:
+    elif args.show is not None:
         handle_show(args.show)
     elif args.download is not None:
         handle_download(args.download)
@@ -96,6 +105,8 @@ def handle_args(args):
         handle_update(args.update)
     elif args.init_database is True:
         handle_init_database()
+    elif args.easy_rename is not None:
+        handle_easy_rename(args.easy_rename)
 
 def handle_authenticate():
     authenticate()
@@ -134,14 +145,32 @@ def handle_list():
     for f in files:
         print "%(title)s\t\t%(id)s" % { "title" : f[0], "id" : f[1] }
 
-def handle_rename(args):
+def rename_file(file_id, new_name):
     service = get_service_object()
-    file_id = args[0]
-    new_name = args[1]
     gdrive.rename_file(service, file_id, new_name)
     dbhelper.rename_file(file_id, new_name)
     print "renamed %(file_id)s to %(new_name)s" % {"file_id" :
             file_id, "new_name" : new_name }
+
+def handle_rename(args):
+    file_id = args[0]
+    new_name = args[1]
+    rename_file(file_id, new_name)
+
+def handle_easy_rename(args):
+    service = get_service_object()
+    old_name = args[0]
+    new_name = args[1]
+    
+    old_id = dbhelper.get_file_id_by_name(old_name)
+
+    print old_id
+
+    if old_id is None:
+        print "Unknown file: %s" % old_name
+        return
+
+    rename_file(old_id, new_name)
 
 def handle_update(args):
     service = get_service_object()

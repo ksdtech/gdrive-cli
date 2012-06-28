@@ -6,7 +6,13 @@ import sqlite3
 import os
 
 def connect():
-    dbpath = os.getenv("HOME") + os.path.sep + ".gdrive-cli.db"
+    home = os.getenv("HOME")
+
+    #windows
+    if home is None:
+        home = os.getenv("HOMEPATH")
+
+    dbpath = home + os.path.sep + ".gdrive-cli.db"
     return sqlite3.connect(dbpath)
 
 def insert_file(metadata):
@@ -255,6 +261,24 @@ def select_all_files():
     return files
 
 
+
+def get_file_id_by_name(file_name):
+    """
+    Generates a basic listing of files in tbl_files
+    """
+    file_name = file_name.strip()
+
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM tbl_files WHERE title = ?; ",
+        (file_name,))
+
+    file_id = cursor.fetchone()
+
+    cursor.close()
+    conn.commit()
+
+    return file_id[0]
 
 
 
