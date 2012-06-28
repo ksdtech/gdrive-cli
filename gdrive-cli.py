@@ -164,8 +164,6 @@ def handle_easy_rename(args):
     
     old_id = dbhelper.get_file_id_by_name(old_name)
 
-    print old_id
-
     if old_id is None:
         print "Unknown file: %s" % old_name
         return
