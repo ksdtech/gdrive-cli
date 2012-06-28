@@ -264,7 +264,7 @@ def select_all_files():
 
 def get_file_id_by_name(file_name):
     """
-    Generates a basic listing of files in tbl_files
+    Returns the id associated with 'file_name' 
     """
     file_name = file_name.strip()
 
