@@ -4,8 +4,8 @@ Please see http://tomdignan.com/projects/gdrive-cli for a video introduction.
 
 ##Dependencies
 
-sudo pip install google-api-python-client
-sudo pip install httplib2
+    sudo pip install google-api-python-client
+    sudo pip install httplib2
 
 ##Chrome Application
 
@@ -70,18 +70,11 @@ You can list files with
     
     gdrive-cli --list
 
-##TODO
-
-The following features need to be implemented
-
-* --update
-
 ##FAQ
 
 Q. Can I use this code to make a FUSE filesystem? 
 
 A. Yes, use fuse-python. There is currently a C project underway as well that you should check out https://github.com/jcline/fuse-google-drive although I am unsure of the status at this time.
-
 
 Q. Why am I am getting "The authenticated user has not installed the app with client id” error?
 
