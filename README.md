@@ -9,13 +9,9 @@ Please see http://tomdignan.com/projects/gdrive-cli for a video introduction.
 
 ##Chrome Application
 
-I just received word from Ali Afshar on Stack Overflow that this is no longer
-required! I have yet to test gdrive-cli under these new circumstances, but
-it probably works without this.
+To use this, you need to register a chrome application. It must be at least installable by you, but need not be published. There is a boilerplate app in the repo you can use to base yours off of. I highly encourage you to take this code and use it to work towards developing useful and profitable chrome apps on the chrome web store!
 
-~~To use this, you need to register a chrome application. It must be at least installable by you, but need not be published. There is a boilerplate app in the repo you can use to base yours off of. I highly encourage you to take this code and use it to work towards developing useful and profitable chrome apps on the chrome web store!~~
-
-~~You *must* publish the chrome app for this to work. It need not be published publically, but you must at least make use of the "publish to test accounts feature" or you will get error 403.~~
+You *must* publish the chrome app for this to work. It need not be published publically, but you must at least make use of the "publish to test accounts feature" or you will get error 403.
 
 ##Installation
 
