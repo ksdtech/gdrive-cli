@@ -1,6 +1,7 @@
 from apiclient import errors
 from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
+import cgi
 import httplib2
 import os
 import simplejson
@@ -106,6 +107,39 @@ def get_file_instance(service, file_id):
     except errors.HttpError, error:
         print "error %s" % error
         return http_error_tuple(None, error.content)
+        
+def query_escape(s):
+    return s.replace("'", "\\'")
+
+def find_file(service, title, parent=None):
+    query = "mimeType != 'application/vnd.google-apps.folder' and title = '%s'" % query_escape(title)
+    if parent:
+        query += (" and '%s' in parents" % parent)
+    param = { }
+    param['q'] = query
+    param['maxResults'] = 10
+    try:
+        files = service.files().list(**param).execute()
+        for file in files['items']:
+            return (file, 200, '')
+        return (None, 404, 'notFound')
+    except errors.HttpError, error:
+        return http_error_tuple(None, error.content)
+
+def find_folder(service, title, parent=None):
+    query = "mimeType = 'application/vnd.google-apps.folder' and title = '%s'" % query_escape(title)
+    if parent:
+        query += (" and '%s' in parents" % parent)
+    param = { }
+    param['q'] = query
+    param['maxResults'] = 10
+    try:
+        files = service.files().list(**param).execute()
+        for folder in files['items']:
+            return (folder, 200, '')
+        return (None, 404, 'notFound')
+    except errors.HttpError, error:
+        return http_error_tuple(None, error.content)
 
 def download_file_by_id(service, file_id):
     """
@@ -177,6 +211,43 @@ def insert_file(service, title, description, parent_id, mime_type, filename):
         # print 'File ID: %s' % file['id']
 
         return (file, 200, '')
+    except errors.HttpError, error:
+        return http_error_tuple(None, error.content)
+
+
+################################################################################
+# Files: insert                                                                                                                                #
+################################################################################
+
+def insert_folder(service, title, description, parent_id):
+    """Insert new folder.
+
+    Args:
+        service: Drive API service instance.
+        title: Title of the folder to insert, including the extension.
+        description: Description of the folder to insert.
+        parent_id: Parent folder's ID.
+    Returns:
+        Inserted folder metadata if successful, None otherwise.
+    """
+    body = {
+        'title': title,
+        'description': description,
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+
+    # Set the parent folder.
+    if parent_id:
+        body['parents'] = [{'id': parent_id}]
+
+    try:
+        folder = service.files().insert(
+                body=body).execute()
+
+        # Uncomment the following line to print the Folder ID
+        # print 'Folder ID: %s' % folder['id']
+
+        return (folder, 200, '')
     except errors.HttpError, error:
         return http_error_tuple(None, error.content)
 
