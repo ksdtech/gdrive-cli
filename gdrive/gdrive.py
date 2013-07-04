@@ -2,8 +2,11 @@ from apiclient import errors
 from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
 import httplib2
-import traceback
 import os
+import simplejson
+import sys
+import traceback
+
 """
 Google Drive python module. The code in this file is taken directly from
 Google's API reference.
@@ -42,7 +45,29 @@ def build_service(credentials):
     """
     http = httplib2.Http()
     http = credentials.authorize(http)
-    return build('drive', 'v1', http=http)
+    return build('drive', 'v2', http=http)
+
+################################################################################
+# Error handling: we re-raise errors that can be retried
+# See https://developers.google.com/drive/handle-errors                                                                                                                         #
+################################################################################
+
+def is_rate_limited_error(code, reason):
+    return (code == 403 or code == 503) and reason in ['rateLimitExceeded', 'userRateLimitExceeded']
+    
+def http_error_tuple(rv, content):
+    print 'An error occurred: %s' % content
+    try:
+        # differs from documentation, possibly changed in v2
+        error = simplejson.loads(content).get('error')
+        code = error.get('code')
+        first_error = error.get('errors')[0]
+        reason = first_error.get('reason')
+        return (rv, code, reason)
+    except:
+        print "problem parsing http error"
+        traceback.print_exc(file=sys.stdout)
+    return (rv, 500, 'parseError')
 
 ################################################################################
 # Files: get                                                                                                                                     #
@@ -56,13 +81,14 @@ def print_file(service, file_id):
         file_id: ID of the file to print metadata for.
     """
     try:
-        file = service.files().get(id=file_id).execute()
+        file = service.files().get(fileId=file_id).execute()
 
         print 'Title: %s' % file['title']
         print 'Description: %s' % file['description']
         print 'MIME type: %s' % file['mimeType']
+        return (True, 200, '')
     except errors.HttpError, error:
-        print 'An error occurred: %s' % error
+        return http_error_tuple(False, error.content)
 
 def get_file_instance(service, file_id):
     """Print a file's metadata.
@@ -75,18 +101,20 @@ def get_file_instance(service, file_id):
         file instance or None
     """
     try:
-        file = service.files().get(id=file_id).execute()
-        return file
+        file = service.files().get(fileId=file_id).execute()
+        return (file, 200, '')
     except errors.HttpError, error:
-        print 'An error occurred: %s' % error
-        return None
+        print "error %s" % error
+        return http_error_tuple(None, error.content)
 
 def download_file_by_id(service, file_id):
     """
     Download file content by id
     """
-    drive_file = get_file_instance(service, file_id)
-    return download_file(service, drive_file)
+    drive_file, reason, code = get_file_instance(service, file_id)
+    if drive_file:
+        return download_file(service, drive_file)
+    return (None, reason, code)
 
 def download_file(service, drive_file):
     """Download a file's content.
@@ -101,15 +129,13 @@ def download_file(service, drive_file):
     download_url = drive_file.get('downloadUrl')
     if download_url:
         resp, content = service._http.request(download_url)
+        print 'Status: %s' % resp
         if resp.status == 200:
-            #print 'Status: %s' % resp
-            return content
+            return (content, 200, '')
         else:
-            print 'An error occurred: %s' % resp
-            return None
-    else:
-        # The file doesn't have any content stored on Drive.
-        return None
+            return (None, resp.status, repr(resp))
+    # The file doesn't have any content stored on Drive.
+    return (None, 200, '')
 
 ################################################################################
 # Files: insert                                                                                                                                #
@@ -140,8 +166,7 @@ def insert_file(service, title, description, parent_id, mime_type, filename):
 
     # Set the parent folder.
     if parent_id:
-        body['parentsCollection'] = [{'id': parent_id}]
-
+        body['parents'] = [{'id': parent_id}]
 
     try:
         file = service.files().insert(
@@ -151,12 +176,9 @@ def insert_file(service, title, description, parent_id, mime_type, filename):
         # Uncomment the following line to print the File ID
         # print 'File ID: %s' % file['id']
 
-        return file
+        return (file, 200, '')
     except errors.HttpError, error:
-        print "TRACEBACK"
-        print traceback.format_exc()
-        print 'An error occured: %s' % error
-        return None
+        return http_error_tuple(None, error.content)
 
 
 ################################################################################
@@ -178,14 +200,13 @@ def rename_file(service, file_id, new_title):
 
         # Rename the file.
         updated_file = service.files().patch(
-                id=file_id,
+                fileId=file_id,
                 body=file,
                 fields='title').execute()
 
-        return updated_file
+        return (updated_file, 200, '')
     except errors.HttpError, error:
-        print 'An error occurred: %s' % error
-        return None
+        return http_error_tuple(None, error.content)
 
 ################################################################################
 # Files: delete                                                                                                                                #
@@ -202,12 +223,11 @@ def delete_file_by_id(service, file_id):
     """
     try:
         delete_file = service.files().delete(
-            id=file_id).execute()
+            fileId=file_id).execute()
 
-        return file_id
+        return (file_id, 200, '')
     except errors.HttpError, error:
-        print 'An error occurred: $s' % error
-        return None
+        return http_error_tuple(None, error.content)
         
 
 
@@ -232,7 +252,7 @@ def update_file(service, file_id, new_title, new_description, new_mime_type,
     """
     try:
         # First retrieve the file from the API.
-        file = service.files().get(id=file_id).execute()
+        file = service.files().get(fileId=file_id).execute()
 
         # File's new metadata.
         file['title'] = new_title
@@ -247,11 +267,10 @@ def update_file(service, file_id, new_title, new_description, new_mime_type,
 
         # Send the request to the API.
         updated_file = service.files().update(
-                id=file_id,
+                fileId=file_id,
                 body=file,
                 newRevision=new_revision,
                 media_body=media_body).execute()
-        return updated_file
+        return (updated_file, 200, '')
     except errors.HttpError, error:
-        print 'An error occurred: %s' % error
-        return None
+        return http_error_tuple(None, error.content)

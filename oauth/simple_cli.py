@@ -41,21 +41,25 @@ else:
     print "No client_secrets.json file was found! Exiting."
     sys.exit(1)
 
-SCOPES = [
+DEFAULT_SCOPES = [
         'https://www.googleapis.com/auth/drive.file',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
 ]
 
-def authenticate():
+def authenticate(scopes=None):
     """
     Authenticates and returns OAuth2 credentials.
 
     Warning, this launches a web browser! You will need to click.
     """
+    if scopes is None:
+        scopes = DEFAULT_SCOPES
+    elif isinstance(scopes, basestring):
+        scopes = [ scopes ]
     storage_path = home + "/.gdrivefs.dat"
     storage = Storage(storage_path)
-    flow = flow_from_clientsecrets(client_secrets_location, ' '.join(SCOPES))
+    flow = flow_from_clientsecrets(client_secrets_location, ' '.join(scopes))
     credentials = run(flow, storage)
     return credentials
 

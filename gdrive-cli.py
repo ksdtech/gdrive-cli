@@ -42,13 +42,13 @@ def get_service_object():
     credentials = get_stored_credentials()
     return gdrive.build_service(credentials)
 
-def store_credentials():
-    credentials = simple_cli.authenticate()
+def store_credentials(scopes):
+    credentials = simple_cli.authenticate(scopes)
     pickled_creds_path = get_stored_credentials_path()
     pickle.dump(credentials, open(pickled_creds_path, "wb"))
 
-def authenticate():
-    store_credentials()
+def authenticate(scopes=None):
+    store_credentials(scopes)
 
 def get_stored_credentials():
     pickled_creds_path = get_stored_credentials_path()
@@ -117,7 +117,7 @@ def handle_show(file_id):
 
 def handle_download(file_id):
     service = get_service_object()
-    download = gdrive.download_file_by_id(service, file_id)
+    download, code, reason = gdrive.download_file_by_id(service, file_id)
     print download
 
 def handle_insert(args):
@@ -133,7 +133,7 @@ def handle_insert(args):
     mime_type = args[3]
     filename = args[4]
 
-    file = gdrive.insert_file(service, title, description, parent_id, mime_type,
+    file, code, reason = gdrive.insert_file(service, title, description, parent_id, mime_type,
             filename)
 
     id = dbhelper.insert_file(file)
@@ -186,7 +186,7 @@ def handle_update(args):
         new_revision = True
         
 
-    file = gdrive.update_file(service, file_id, new_title, new_description, new_mime_type, new_filename, new_revision)
+    file, code, reason = gdrive.update_file(service, file_id, new_title, new_description, new_mime_type, new_filename, new_revision)
 
     id = dbhelper.update_file(file)
     print "Updated file ", id
