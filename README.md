@@ -2,6 +2,11 @@
 
 Please see http://tomdignan.com/projects/gdrive-cli for a video introduction.
 
+##ksdtech Enhancements
+
+* TODO: Update to Google Drive v3 API
+* TODO: Enable Team Drive support
+
 ##Dependencies
 
     sudo pip install google-api-python-client
